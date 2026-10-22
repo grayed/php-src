@@ -276,6 +276,7 @@ struct _zend_array {
 #define HT_MIN_SIZE 8
 
 #if SIZEOF_SIZE_T == 4
+# error "SIZEOF_SIZE_T is 4?!"
 # define HT_MAX_SIZE 0x04000000 /* small enough to avoid overflow checks */
 # define HT_HASH_TO_BUCKET_EX(data, idx) \
 	((Bucket*)((char*)(data) + (idx)))
@@ -721,8 +722,9 @@ static zend_always_inline zend_uchar zval_get_type(const zval* pz) {
 	} while (0)
 
 #define ZVAL_ARR(z, a) do {						\
+		zend_array *__arr = (a);						\
 		zval *__z = (z);						\
-		Z_ARR_P(__z) = (a);						\
+		Z_ARR_P(__z) = __arr;						\
 		Z_TYPE_INFO_P(__z) = IS_ARRAY_EX;		\
 	} while (0)
 

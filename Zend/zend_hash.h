@@ -58,6 +58,10 @@
 # define HT_ALLOW_COW_VIOLATION(ht)
 #endif
 
+#define HT_INVALIDATE(ht) do { \
+		(ht)->u.flags &= ~HASH_FLAG_INITIALIZED; \
+	} while (0)
+
 typedef struct _zend_hash_key {
 	zend_ulong h;
 	zend_string *key;
@@ -250,6 +254,8 @@ ZEND_API zval* ZEND_FASTCALL zend_hash_minmax(const HashTable *ht, compare_func_
 
 ZEND_API int ZEND_FASTCALL zend_hash_rehash(HashTable *ht);
 
+ZEND_API HashTable* ZEND_FASTCALL _zend_new_array_0(void);
+ZEND_API HashTable* ZEND_FASTCALL zend_new_array_singleton(void);
 ZEND_API uint32_t zend_array_count(HashTable *ht);
 ZEND_API HashTable* ZEND_FASTCALL zend_array_dup(HashTable *source);
 ZEND_API void ZEND_FASTCALL zend_array_destroy(HashTable *ht);

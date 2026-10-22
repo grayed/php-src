@@ -299,6 +299,14 @@ void shutdown_executor(void) /* {{{ */
 		} ZEND_HASH_FOREACH_END_DEL();
 
 		zend_cleanup_internal_classes();
+		EG(objects_store).object_buckets = NULL;
+		EG(objects_store).top = 1;
+
+		ZVAL_UNDEF(&EG(user_error_handler));
+		ZVAL_UNDEF(&EG(user_exception_handler));
+		memset(&EG(user_error_handlers_error_reporting), 0, sizeof(EG(user_error_handlers_error_reporting)));
+		memset(&EG(user_error_handlers), 0, sizeof(EG(user_error_handlers)));
+		memset(&EG(user_exception_handlers), 0, sizeof(EG(user_exception_handlers)));
 	} else {
 		zend_hash_graceful_reverse_destroy(&EG(symbol_table));
 
@@ -392,6 +400,10 @@ void shutdown_executor(void) /* {{{ */
 #endif
 
 	EG(ht_iterators_used) = 0;
+
+	/* XXX CVS-2026-109618 and/or CVE-2026-109619 measure, not sure about placement */
+	EG(error_handling) = EH_NORMAL;
+	EG(exception) = NULL;
 
 	zend_shutdown_fpu();
 }
